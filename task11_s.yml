@@ -1,0 +1,19 @@
+- hosts: all
+  tasks:
+  - name: "Copying java Software"
+    copy:
+      src: "/root/java.rpm"
+      dest: "/root"
+  - name: "Copying Hadoop Software"
+    copy:
+      src: "/root/hadoop.rpm"
+      dest: "/root"
+  - name: "Installing java Software"
+    dnf:
+      name: "/root/java.rpm"
+      state: present
+      disable_gpg_check: yes
+  - name: "Installing hadoop Software"
+    command:
+      cmd: "rpm -i /root/hadoop.rpm --force"
+

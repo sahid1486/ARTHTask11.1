@@ -1,0 +1,26 @@
+- hosts: datanode
+  tasks:
+  - name: "Creating directory for Datanode"
+    file:
+      path: "/dn1"
+      state: directory
+  - name: "Configuring hdfs-site.xml in Datanode"
+    blockinfile:
+      path: "/etc/hadoop/hdfs-site.xml"
+      insertafter: "<configuration>"
+      block: |
+              <property>
+              <name>dfs.data.dir</name>
+              <value>/shared</value>
+              </property>
+  - name: "Configure core-site.xml file in Datanode"
+    blockinfile:
+       path: "/etc/hadoop/core-site.xml"
+       insertafter: "<configuration>"
+       block: |
+               <property>
+               <name>fs.default.name</name>
+               <value>hdfs://{{ groups['namenode'][0] }}:9001</value>
+               </property>
+  - name: "Start Datanode service"
+    command: "hadoop-daemon.sh start datanode"

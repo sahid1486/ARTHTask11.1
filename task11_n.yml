@@ -1,0 +1,28 @@
+- hosts: namenode
+  tasks:
+  - name: "Creating directory for namenode"
+    file:
+      path: "/nn1"
+      state: directory
+  - name: "Configuring hdfs-site.xml file in namenode"
+    blockinfile:
+      path: "/etc/hadoop/hdfs-site.xml"
+      insertafter: "<configuration>"
+      block: |
+              <property>
+              <name>dfs.name.dir</name>
+              <value>/dataspace</value>
+              </property>
+  - name: "Configuring core-site.xml file in namenode"
+    blockinfile:
+       path: /etc/hadoop/core-site.xml
+       insertafter: "<configuration>"
+       block: |
+               <property>
+               <name>fs.default.name</name>
+               <value>hdfs://{{ groups['namenode'][0] }}:9001</value>
+               </property>
+  - name: "Formating Namenode"
+    shell: "echo Y | hadoop namenode -format"
+  - name: "Start Namenode service"
+    command: "hadoop-daemon.sh start namenode"
